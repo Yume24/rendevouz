@@ -3,3 +3,6 @@ spring:
     name: rendevouz
 jwt:
   secret: supersecret394823-94893-19pfijewpifjdqeprjwjpewfjwpeitj2r43p9
+  issuer: rendevouz
+  access:
+    expiry: 3600
