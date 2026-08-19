@@ -1,3 +1,5 @@
 spring:
   application:
     name: rendevouz
+jwt:
+  secret: supersecret394823-94893-19pfijewpifjdqeprjwjpewfjwpeitj2r43p9
