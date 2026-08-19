@@ -21,14 +21,14 @@ public class GroupController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Mono<GroupDTO> createGroup() {
-        var user = userService.createAnnonymousUser();
+    Mono<GroupDTO> createGroup(@RequestBody String name) {
+        var user = userService.createAnnonymousUser(name);
         return groupService.createGroup(user.id());
     }
 
     @PostMapping("/{id}/join")
-    Mono<Void> joinGroup(@PathVariable String id) {
-        var user = userService.createAnnonymousUser();
+    Mono<Void> joinGroup(@PathVariable String id, @RequestBody String name) {
+        var user = userService.createAnnonymousUser(name);
         return groupService.joinGroup(id, user.id());
     }
 }
