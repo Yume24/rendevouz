@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UUIDService uuidService;
 
-    public UserDTO createAnnonymousUser(String name) {
+    public UserDTO createAnonymousUser(String name) {
         var userID = uuidService.generateUUID();
         return new UserDTO(userID, name);
     }

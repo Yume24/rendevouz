@@ -1,11 +1,15 @@
 package com.yume24.rendevouz.group;
 
+import com.yume24.rendevouz.token.TokenDTO;
+import com.yume24.rendevouz.token.TokenService;
+import com.yume24.rendevouz.user.UserLocationDTO;
 import com.yume24.rendevouz.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/group")
@@ -13,22 +17,22 @@ import reactor.core.publisher.Mono;
 public class GroupController {
     private final GroupService groupService;
     private final UserService userService;
+    private final TokenService tokenService;
 
     @GetMapping("/{id}")
-    Flux<String> getMembers(@PathVariable String id) {
+    Mono<List<UserLocationDTO>> getMembers(@PathVariable String id) {
         return groupService.getGroupMembers(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Mono<GroupDTO> createGroup(@RequestBody String name) {
-        var user = userService.createAnnonymousUser(name);
-        return groupService.createGroup(user.id());
+    Mono<GroupDTO> createGroup() {
+        return groupService.createGroup();
     }
 
     @PostMapping("/{id}/join")
-    Mono<Void> joinGroup(@PathVariable String id, @RequestBody String name) {
-        var user = userService.createAnnonymousUser(name);
-        return groupService.joinGroup(id, user.id());
+    Mono<TokenDTO> joinGroup(@PathVariable String id, @RequestBody UserLocationDTO userLocation) {
+        var user = userService.createAnonymousUser(userLocation.id());
+        return groupService.joinGroup(id, userLocation).thenReturn(tokenService.createTokens(user));
     }
 }

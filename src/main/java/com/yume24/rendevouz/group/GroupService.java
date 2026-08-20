@@ -1,35 +1,59 @@
 package com.yume24.rendevouz.group;
 
+import com.yume24.rendevouz.redis.RedisConfiguration;
+import com.yume24.rendevouz.user.UserLocationDTO;
 import com.yume24.rendevouz.uuid.UUIDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class GroupService {
-    private final UUIDService uuidService;
-    private final ReactiveRedisOperations<String, String> redisOperations;
+    private static final String GROUP_KEY = "group";
+    private static final String LOCATION = "location";
 
-    public Mono<GroupDTO> createGroup(String userId) {
+    private final UUIDService uuidService;
+    private final ReactiveRedisOperations<String, Boolean> redisOperationsGroup;
+    private final ReactiveRedisOperations<String, UserLocationDTO> redisOperationsLocation;
+
+    public Mono<GroupDTO> createGroup() {
         var groupID = uuidService.generateUUID();
         var group = new GroupDTO(groupID);
 
-        return redisOperations.opsForSet().add(groupID, userId).thenReturn(group);
+        return redisOperationsGroup.opsForValue().set(createGroupKey(groupID), true).thenReturn(group);
     }
 
-    public Mono<Void> joinGroup(String groupId, String userId) {
-        return redisOperations.opsForSet().size(groupId)
-                .flatMap(s -> {
-                    if (s == 0) return Mono.error(new RuntimeException());
-                    return redisOperations.opsForSet().add(groupId, userId);
-                })
-                .then();
+    public Mono<Void> joinGroup(String groupId, UserLocationDTO user) {
+        return checkGroupExists(groupId)
+                .then(redisOperationsLocation.opsForHash().putIfAbsent(createLocationKey(groupId), user.id(), user))
+                .flatMap(success -> success ? Mono.empty() : Mono.error(new UserAlreadyJoinedException(user.id())));
     }
 
-    public Flux<String> getGroupMembers(String groupId) {
-        return redisOperations.opsForSet().members(groupId).switchIfEmpty(Flux.error(new RuntimeException()));
+    public Mono<List<UserLocationDTO>> getGroupMembers(String groupId) {
+        return checkGroupExists(groupId)
+                .then(
+                    redisOperationsLocation
+                    .opsForHash()
+                    .entries(createLocationKey(groupId))
+                    .map(Map.Entry::getValue)
+                    .cast(UserLocationDTO.class)
+                    .collectList());
+    }
+
+    private Mono<Void> checkGroupExists(String groupId) {
+        return redisOperationsGroup.opsForValue().get(createGroupKey(groupId)).switchIfEmpty(Mono.error(new NoSuchGroupException(groupId))).then();
+    }
+
+    private String createLocationKey(String groupId) {
+        return GROUP_KEY + RedisConfiguration.KEY_DELIMITER + groupId + RedisConfiguration.KEY_DELIMITER + LOCATION;
+    }
+
+    private String createGroupKey(String groupId) {
+        return GROUP_KEY + RedisConfiguration.KEY_DELIMITER + groupId;
     }
 }

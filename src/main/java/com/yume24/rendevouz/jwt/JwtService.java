@@ -6,7 +6,6 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Map;
 

@@ -1,4 +1,9 @@
 package com.yume24.rendevouz.user;
 
-public record UserLocationDTO(UserDTO user, long latitude, long longitude) {
+import java.time.Instant;
+
+public record UserLocationDTO(String id,
+                              long latitude,
+                              long longitude,
+                              Instant lastUpdated) {
 }
