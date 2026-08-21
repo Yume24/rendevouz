@@ -3,3 +3,14 @@ services:
     image: 'redis:latest'
     ports:
       - '6379'
+  postgres:
+    image: 'postgres:18-bookworm'
+    ports:
+      - '5432'
+    environment:
+      POSTGRES_PASSWORD: 'secretpassword'
+      POSTGRES_DB: 'rendezvous'
+    volumes:
+      - 'pgdata:/var/lib/postgresql'
+volumes:
+  pgdata:

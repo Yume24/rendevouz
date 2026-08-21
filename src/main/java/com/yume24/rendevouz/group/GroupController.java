@@ -2,14 +2,13 @@ package com.yume24.rendevouz.group;
 
 import com.yume24.rendevouz.token.TokenDTO;
 import com.yume24.rendevouz.token.TokenService;
-import com.yume24.rendevouz.user.UserLocationDTO;
+import com.yume24.rendevouz.location.UserLocationDTO;
 import com.yume24.rendevouz.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/group")
@@ -20,7 +19,7 @@ public class GroupController {
     private final TokenService tokenService;
 
     @GetMapping("/{id}")
-    Mono<List<UserLocationDTO>> getMembers(@PathVariable String id) {
+    Flux<UserLocationDTO> getMembers(@PathVariable String id) {
         return groupService.getGroupMembers(id);
     }
 

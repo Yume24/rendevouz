@@ -1,14 +1,14 @@
 package com.yume24.rendevouz.group;
 
 import com.yume24.rendevouz.redis.RedisConfiguration;
-import com.yume24.rendevouz.user.UserLocationDTO;
+import com.yume24.rendevouz.location.UserLocationDTO;
 import com.yume24.rendevouz.uuid.UUIDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -34,15 +34,14 @@ public class GroupService {
                 .flatMap(success -> success ? Mono.empty() : Mono.error(new UserAlreadyJoinedException(user.id())));
     }
 
-    public Mono<List<UserLocationDTO>> getGroupMembers(String groupId) {
+    public Flux<UserLocationDTO> getGroupMembers(String groupId) {
         return checkGroupExists(groupId)
-                .then(
+                .thenMany(
                     redisOperationsLocation
                     .opsForHash()
                     .entries(createLocationKey(groupId))
                     .map(Map.Entry::getValue)
-                    .cast(UserLocationDTO.class)
-                    .collectList());
+                    .cast(UserLocationDTO.class));
     }
 
     private Mono<Void> checkGroupExists(String groupId) {

@@ -1,6 +1,6 @@
 package com.yume24.rendevouz.redis;
 
-import com.yume24.rendevouz.user.UserLocationDTO;
+import com.yume24.rendevouz.location.UserLocationDTO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;

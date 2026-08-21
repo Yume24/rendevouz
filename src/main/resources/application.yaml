@@ -1,6 +1,10 @@
 spring:
   application:
     name: rendevouz
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/rendezvouz
+    username: postgres
+    password: supersecretpassword
 jwt:
   secret: supersecret394823-94893-19pfijewpifjdqeprjwjpewfjwpeitj2r43p9
   issuer: rendevouz
