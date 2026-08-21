@@ -1,3 +1,5 @@
 package com.yume24.rendevouz.group;
 
-public record GroupDTO(String id) {}
+import java.util.UUID;
+
+public record GroupDTO(UUID id) {}

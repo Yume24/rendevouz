@@ -1,27 +1,20 @@
 package com.yume24.rendevouz.group;
 
 import com.yume24.rendevouz.token.TokenDTO;
-import com.yume24.rendevouz.token.TokenService;
-import com.yume24.rendevouz.location.UserLocationDTO;
-import com.yume24.rendevouz.user.UserService;
+import com.yume24.rendevouz.userGroup.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/group")
 @RequiredArgsConstructor
 public class GroupController {
     private final GroupService groupService;
-    private final UserService userService;
-    private final TokenService tokenService;
-
-    @GetMapping("/{id}")
-    Flux<UserLocationDTO> getMembers(@PathVariable String id) {
-        return groupService.getGroupMembers(id);
-    }
+    private final UserGroupService userGroupService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,8 +23,9 @@ public class GroupController {
     }
 
     @PostMapping("/{id}/join")
-    Mono<TokenDTO> joinGroup(@PathVariable String id, @RequestBody UserLocationDTO userLocation) {
-        var user = userService.createAnonymousUser(userLocation.id());
-        return groupService.joinGroup(id, userLocation).thenReturn(tokenService.createTokens(user));
+    Mono<TokenDTO> joinGroup(@PathVariable UUID id) {
+        return groupService.checkIfGroupExists(id).then(
+                userGroupService.addUserToGroup()
+        )
     }
 }
