@@ -1,16 +1,17 @@
 package com.yume24.rendevouz.user;
 
-import com.yume24.rendevouz.uuid.UUIDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UUIDService uuidService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserDTO createAnonymousUser(String name) {
-        var userID = uuidService.generateUUID();
-        return new UserDTO(userID, name);
+    public Mono<UserDTO> createAnonymousUser(String username) {
+        var anonymousUser = User.builder().username(username).build();
+        return userRepository.save(anonymousUser).map(userMapper::toDto);
     }
 }

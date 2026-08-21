@@ -1,11 +1,11 @@
-package com.yume24.rendevouz.group;
+package com.yume24.rendevouz.userGroup;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.CONFLICT)
-public class UserAlreadyJoinedException extends RuntimeException {
-    public UserAlreadyJoinedException(String message) {
+public class UserAlreadyInGroupException extends RuntimeException {
+    public UserAlreadyInGroupException(String message) {
         super(message);
     }
 }
