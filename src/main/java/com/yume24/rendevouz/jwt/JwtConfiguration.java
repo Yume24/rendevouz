@@ -14,13 +14,11 @@ import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class JwtConfiguration {
-    @Value("${jwt.secret}")
-    private String secret;
-
-    private static final String JWT_ALGORITHM = "HMAC-SHA256";
-
     public static final String ROLE_CLAIM = "roles";
     public static final String ROLE_PREFIX = "ROLE_";
+    private static final String JWT_ALGORITHM = "HMAC-SHA256";
+    @Value("${jwt.secret}")
+    private String secret;
 
     @Bean
     SecretKey secretKey() {

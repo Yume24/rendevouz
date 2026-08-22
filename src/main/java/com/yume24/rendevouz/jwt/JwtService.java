@@ -3,7 +3,9 @@ package com.yume24.rendevouz.jwt;
 import com.yume24.rendevouz.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,13 +19,11 @@ import static com.yume24.rendevouz.jwt.JwtConfiguration.ROLE_PREFIX;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
+    private final JwtEncoder jwtEncoder;
     @Value("${jwt.issuer}")
     private String issuer;
-
     @Value("${jwt.access.expiry}")
     private long expiry;
-
-    private final JwtEncoder jwtEncoder;
 
     public String createJwt(String subject, Collection<User.UserRole> roles, Optional<Map<String, Object>> claims) {
         var now = Instant.now();

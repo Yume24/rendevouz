@@ -15,20 +15,17 @@ import java.util.UUID;
 @Getter
 @Setter
 public class User {
+    @Id
+    private UUID ID;
+    @Column("username")
+    private String username;
+    @Column("created_at")
+    private Instant createdAt;
+    @Column("role")
+    private UserRole role;
+
     public enum UserRole {
         ANONYMOUS,
         USER
     }
-
-    @Id
-    private UUID ID;
-
-    @Column("username")
-    private String username;
-
-    @Column("created_at")
-    private Instant createdAt;
-
-    @Column("role")
-    private UserRole role;
 }
