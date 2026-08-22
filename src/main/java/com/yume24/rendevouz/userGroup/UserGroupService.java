@@ -22,6 +22,6 @@ public class UserGroupService {
         return userGroupRepository.existsById(key).handle((exists, sink) -> {
             if (exists) sink.error(new UserAlreadyInGroupException(key.toString()));
             else sink.complete();
-        })
+        });
     }
 }

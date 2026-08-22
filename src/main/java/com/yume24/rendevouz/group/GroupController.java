@@ -18,8 +18,8 @@ public class GroupController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Mono<GroupDTO> createGroup() {
-        return groupService.createGroup();
+    Mono<GroupDTO> createGroup(@RequestBody GroupCreateRequest groupCreateRequest) {
+        return groupService.createGroup(groupCreateRequest.name());
     }
 
     @PostMapping("/{id}/join")

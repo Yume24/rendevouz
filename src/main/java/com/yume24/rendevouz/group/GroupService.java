@@ -12,8 +12,9 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMapper groupMapper;
 
-    public Mono<GroupDTO> createGroup() {
-        return groupRepository.save(new Group()).map(groupMapper::toDto);
+    public Mono<GroupDTO> createGroup(String name, UUID createdBy) {
+        var group = Group.builder().name(name).createdBy(createdBy).build();
+        return groupRepository.save(group).map(groupMapper::toDto);
     }
 
     public Mono<Void> checkIfGroupExists(UUID groupID) {
