@@ -1,12 +1,14 @@
 package com.yume24.rendevouz.group;
 
-import com.yume24.rendevouz.token.TokenDTO;
 import com.yume24.rendevouz.userGroup.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -18,14 +20,16 @@ public class GroupController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Mono<GroupDTO> createGroup(@RequestBody GroupCreateRequest groupCreateRequest) {
-        return groupService.createGroup(groupCreateRequest.name());
+    Mono<GroupDTO> createGroup(@RequestBody GroupCreateRequest groupCreateRequest, @AuthenticationPrincipal Jwt jwt) {
+        var userId = UUID.fromString(Objects.requireNonNull(jwt.getSubject()));
+        return groupService.createGroup(groupCreateRequest.name(), userId);
     }
 
-    @PostMapping("/{id}/join")
-    Mono<TokenDTO> joinGroup(@PathVariable UUID id) {
-        return groupService.checkIfGroupExists(id).then(
-                userGroupService.addUserToGroup()
-        )
+    @PostMapping("/{groupId}/join")
+    Mono<Void> joinGroup(@PathVariable UUID groupId, @AuthenticationPrincipal Jwt jwt) {
+        var userId = UUID.fromString(Objects.requireNonNull(jwt.getSubject()));
+        return groupService.checkIfGroupExists(groupId).then(
+                userGroupService.addUserToGroup(userId, groupId)
+        );
     }
 }

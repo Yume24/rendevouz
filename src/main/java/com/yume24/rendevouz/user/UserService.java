@@ -11,7 +11,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     public Mono<UserDTO> createAnonymousUser(String username) {
-        var anonymousUser = User.builder().username(username).build();
+        var anonymousUser = User.builder().username(username).role(User.UserRole.ROLE_ANONYMOUS).build();
         return userRepository.save(anonymousUser).map(userMapper::toDto);
     }
 }

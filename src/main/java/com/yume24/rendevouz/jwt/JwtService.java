@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,14 +22,14 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final ReactiveJwtDecoder jwtDecoder;
 
-    public String createJwt(String subject, Map<String, Object> claims) {
+    public String createJwt(String subject, Optional<Map<String, Object>> claims) {
         var now = Instant.now();
         var claimsSet = JwtClaimsSet.builder().
                 subject(subject)
                 .issuer(issuer)
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiry))
-                .claims(claimMap -> claimMap.putAll(claims))
+                .claims(claimMap -> claims.ifPresent(claimMap::putAll))
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }
