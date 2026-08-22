@@ -19,6 +19,9 @@ public class JwtConfiguration {
 
     private static final String JWT_ALGORITHM = "HMAC-SHA256";
 
+    public static final String ROLE_CLAIM = "roles";
+    public static final String ROLE_PREFIX = "ROLE_";
+
     @Bean
     SecretKey secretKey() {
         return new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), JWT_ALGORITHM);

@@ -15,9 +15,9 @@ import java.util.UUID;
 @Getter
 @Setter
 public class User {
-    enum UserRole {
-        ROLE_ANONYMOUS,
-        ROLE_USER
+    public enum UserRole {
+        ANONYMOUS,
+        USER
     }
 
     @Id

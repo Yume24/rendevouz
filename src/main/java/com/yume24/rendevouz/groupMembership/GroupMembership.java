@@ -1,4 +1,4 @@
-package com.yume24.rendevouz.userGroup;
+package com.yume24.rendevouz.groupMembership;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -6,14 +6,14 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.UUID;
 
-record UserGroupKey(UUID userId, UUID groupId) {}
+record GroupMembershipKey(UUID userId, UUID groupId) {}
 
 @Table("users_groups")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserGroup {
+public class GroupMembership {
     @Id
-    private UserGroupKey id;
+    private GroupMembershipKey id;
 }

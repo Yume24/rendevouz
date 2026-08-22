@@ -1,6 +1,6 @@
 package com.yume24.rendevouz.group;
 
-import com.yume24.rendevouz.userGroup.UserGroupService;
+import com.yume24.rendevouz.groupMembership.GroupMembershipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GroupController {
     private final GroupService groupService;
-    private final UserGroupService userGroupService;
+    private final GroupMembershipService groupMembershipService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -29,7 +29,7 @@ public class GroupController {
     Mono<Void> joinGroup(@PathVariable UUID groupId, @AuthenticationPrincipal Jwt jwt) {
         var userId = UUID.fromString(Objects.requireNonNull(jwt.getSubject()));
         return groupService.checkIfGroupExists(groupId).then(
-                userGroupService.addUserToGroup(userId, groupId)
+                groupMembershipService.addUserToGroup(userId, groupId)
         );
     }
 }

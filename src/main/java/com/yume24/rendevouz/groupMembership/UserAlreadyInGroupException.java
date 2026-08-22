@@ -1,4 +1,4 @@
-package com.yume24.rendevouz.userGroup;
+package com.yume24.rendevouz.groupMembership;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
