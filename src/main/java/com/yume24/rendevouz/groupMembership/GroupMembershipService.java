@@ -13,12 +13,22 @@ public class GroupMembershipService {
 
     public Mono<Void> addUserToGroup(UUID userId, UUID groupId) {
         var key = new GroupMembershipKey(userId, groupId);
-        return checkUserAlreadyInGroup(key).then(
+        return checkUserInGroup(key).then(
                 groupMembershipRepository.save(new GroupMembership(key))
         ).then();
     }
 
-    private Mono<Void> checkUserAlreadyInGroup(GroupMembershipKey key) {
+    public Mono<Void> checkUserInGroup(UUID userId, UUID groupId) {
+        var key = new GroupMembershipKey(userId, groupId);
+        return checkUserInGroup(key);
+    }
+
+    public Mono<Void> removeUserFromGroup(UUID userId, UUID groupId) {
+        var key = new GroupMembershipKey(userId, groupId);
+        return groupMembershipRepository.deleteById(key);
+    }
+
+    private Mono<Void> checkUserInGroup(GroupMembershipKey key) {
         return groupMembershipRepository.existsById(key).handle((exists, sink) -> {
             if (exists) sink.error(new UserAlreadyInGroupException(key.toString()));
             else sink.complete();
